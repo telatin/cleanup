@@ -58,19 +58,5 @@ workflow {
     
     TRACKFILES(FASTP.out.json.mix( KRAKEN2_HOST.out.txt ).collect() )
     MULTIQC( FASTP.out.json.mix( KRAKEN2_REPORT.out, TRACKFILES.out ).collect() )
-  /* 
-    FASTP( KRAKEN2_HOST.out.reads )
-    SHOVILL( FASTP.out.reads )
-    ABRICATE( SHOVILL.out )
-    PROKKA( SHOVILL.out )
-    
-    // QUAST requires all the contigs to be in the same directory
-    QUAST( SHOVILL.out.map{it -> it[1]}.collect() )
-
-    // Prepare the summary of Abricate
-    ABRICATE_SUMMARY( ABRICATE.out.map{it -> it[1]}.collect() )
-
-    // Collect all the relevant file for MultiQC
-    MULTIQC( FASTP.out.json.mix( QUAST.out , PROKKA.out, ABRICATE_SUMMARY.out.multiqc).collect() )
-    */ 
+ 
 }
