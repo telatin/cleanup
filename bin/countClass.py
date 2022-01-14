@@ -22,7 +22,10 @@ if __name__ == "__main__":
     outputfile = sys.stdout if args.output is None else open(args.output, 'w')
     
 
-    counter = {}
+    counter = {
+        'C': 0,
+        'U': 0
+    }
     tot = 0
     # Read from stdin
     for line in inputfile:
