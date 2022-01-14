@@ -38,9 +38,9 @@ file("${params.krakendb}/hash.k2d", checkIfExists: true)
 /*
   Modules
 */
-include { MULTIQC; TRACKFILES } from './modules/qc'
+
 include { KRAKEN2_HOST; KRAKEN2_REPORT } from './modules/kraken'
-include { FASTP } from './modules/cleaner'
+include { FASTP; MULTIQC; TRACKFILES  } from './modules/cleaner'
 /* 
  *   DSL2 allows to reuse channels
  */
