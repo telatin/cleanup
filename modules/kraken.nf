@@ -41,7 +41,7 @@ process KRAKEN2_REPORT {
        fastp process to remove adapters and low quality sequences
     */
     tag "$sample_id"
-    label 'process_medium'
+    label 'process_high'
     publishDir "$params.outdir/kraken/", 
         mode: 'copy'
 
