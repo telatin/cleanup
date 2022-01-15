@@ -4,7 +4,7 @@ process FASTP {
     */
     
     tag "$sample_id"
-    label 'process_medium'
+    label 'process_filtering'
 
     publishDir "$params.outdir/reads/", 
         pattern: "*gz",
