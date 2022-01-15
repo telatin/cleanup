@@ -57,7 +57,7 @@ process KRAKEN2_REPORT {
     """
     kraken2 --db $db --threads ${task.cpus} \\
       --report ${sample_id}.kraken2.tsv \\
-      --paired ${reads[0]} ${reads[1]} > /dev/null
+      --memory-mapping  --paired ${reads[0]} ${reads[1]} > /dev/null
     """  
 } 
 process KRAKEN2 {
