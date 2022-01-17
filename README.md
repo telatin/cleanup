@@ -18,3 +18,18 @@ are not allowed).
 
 The "Fastp" step disables any quality filtering, limiting its action to the
 adaptor removal and discarding reads that are too short afterwards.
+
+## Output directory
+
+The output directory contains a [MultiQC report](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_report.html), and the following subdirectories:
+
+* **reads**: the main output: final reads without adapters and host contamination
+* **host-reads**: FASTQ files with the host reads (files can be empty)
+* **kraken**: kraken reports with the classification against the selected database
+* **pipeline_info**: execution [report](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_execution.html) and [timeline](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_timeline.html).
+ 
+## Example reports
+
+* [MultiQC report](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_report.html)
+* [Execution report](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_execution.html)
+* [Timeline](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_timeline.html)
