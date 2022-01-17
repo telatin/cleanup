@@ -1,3 +1,25 @@
+
+process MINREADS {
+    tag "filter $sample_id"
+
+    input:
+    tuple val(sample_id), path(reads) 
+    val(min)
+    
+    output:
+    tuple val(sample_id), path("pass/${sample_id}_R*.fastq.gz"), emit: reads optional true 
+    
+    script:
+    """
+    TOT=\$(seqfu count ${reads[0]} ${reads[1]} | cut -f 2 )
+    mkdir -p pass
+    if [[ \$TOT -gt ${min} ]]; then
+        mv ${reads[0]} pass/${sample_id}_R1.fastq.gz
+        mv ${reads[1]} pass/${sample_id}_R2.fastq.gz
+    fi
+    
+    """
+}
 process FASTP {
     /* 
        fastp process to remove adapters and low quality sequences

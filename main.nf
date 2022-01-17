@@ -8,6 +8,7 @@
 nextflow.enable.dsl = 2
 params.reads = "$baseDir/nano/*_R{1,2}.fastq.gz"
 params.minlen = 50
+params.minreads = 1000
 params.outdir = "$baseDir/denovo"
 params.hostdb = "$baseDir/DB/kraken2_human/"
 params.krakendb = "$baseDir/DB/std/"
@@ -40,7 +41,7 @@ file("${params.krakendb}/hash.k2d", checkIfExists: true)
 */
 
 include { KRAKEN2_HOST; KRAKEN2_REPORT } from './modules/kraken'
-include { FASTP; MULTIQC; TRACKFILES  } from './modules/cleaner'
+include { FASTP; MULTIQC; TRACKFILES; MINREADS  } from './modules/cleaner'
 /* 
  *   DSL2 allows to reuse channels
  */
@@ -51,11 +52,10 @@ reads = Channel
  
 workflow {
 
- 
-    KRAKEN2_HOST( reads, hostPath)
+    MINREADS(reads, params.minreads)
+    KRAKEN2_HOST( MINREADS.out.reads, hostPath)
     FASTP( KRAKEN2_HOST.out.reads, params.minlen )
-    KRAKEN2_REPORT( FASTP.out.reads, reportPath )
-    
+    KRAKEN2_REPORT( FASTP.out.reads, reportPath )    
     TRACKFILES(FASTP.out.json.mix( KRAKEN2_HOST.out.txt ).collect() )
     MULTIQC( FASTP.out.json.mix( KRAKEN2_REPORT.out, TRACKFILES.out ).collect() )
  
