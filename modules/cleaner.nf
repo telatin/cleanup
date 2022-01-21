@@ -1,6 +1,7 @@
 
 process MINREADS {
     tag "filter $sample_id"
+    label 'process_low'
 
     input:
     tuple val(sample_id), path(reads) 
@@ -10,14 +11,52 @@ process MINREADS {
     tuple val(sample_id), path("pass/${sample_id}_R*.fastq.gz"), emit: reads optional true 
     
     script:
+    // # TOT=\$(seqfu count ${reads[0]} ${reads[1]} | cut -f 2 )
     """
-    TOT=\$(seqfu count ${reads[0]} ${reads[1]} | cut -f 2 )
+    TOT=\$(seqfu head -n ${min} ${reads[0]} | seqfu count | cut -f 2 )
+
     mkdir -p pass
-    if [[ \$TOT -gt ${min} ]]; then
+    if [[ \$TOT -eq ${min} ]]; then
         mv ${reads[0]} pass/${sample_id}_R1.fastq.gz
         mv ${reads[1]} pass/${sample_id}_R2.fastq.gz
     fi
     
+    """
+}
+process INDEX {
+    label 'process_low'
+
+    input:
+    path fastadb
+
+    output:
+    path("contaminants-ref")
+
+    script:
+    """
+    mkdir -p contaminants-ref
+    cp ${fastadb} contaminants-ref/contaminants.fasta
+    bwa index contaminants-ref/contaminants.fasta
+    """
+}
+process CONTAMINANTS {
+    tag "$sample_id"
+
+    input:
+    tuple val(sample_id), path(reads)
+    path db
+
+    output:
+    tuple val(sample_id), path("${sample_id}_1.fq.gz"), emit: reads
+    path("${sample_id}.contaminants.txt"), emit: contaminants
+    
+    script:
+    """
+  
+    bwa mem -t ${task.cpus} contaminants-ref/contaminants.fasta "${reads[0]}" "${reads[1]}" | samtools view -bS > contaminants.bam
+    samtools fastq -f 12 -F 256  -1 ${sample_id}_1.fq -2 ${sample_id}_2.fq contaminants.bam
+    samtools stats contaminants.bam | grep ^SN | cut -f 2- |  grep "reads mapped:" > ${sample_id}.contaminants.txt
+    pigz -p ${task.cpus} ${sample_id}_{1,2}.fq
     """
 }
 process FASTP {
@@ -54,6 +93,7 @@ process FASTP {
         -l ${minlen}  
     
     sed -i.bak 's/-nohost_1//g' *.json 
+    sed -i.bak 's/_1.fq.gz//g' *.json
     """
     //sed -i 's/-nohost_.//g' "$OUTDIR"/${BASENAME}.fastp.json
 }
