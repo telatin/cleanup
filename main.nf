@@ -17,10 +17,11 @@ params.contaminants = false
         
 // prints to the screen and to the log
 log.info """
-         GMH Cleanup pipeline (version 1)
+         GMH Cleanup pipeline (version 1.1)
          ===================================
          input reads  : ${params.reads}
          outdir       : ${params.outdir}
+         min reads    : ${params.minreads}
          host db      : ${params.hostdb}
          kraken db    : ${params.krakendb}
          contaminants : ${params.contaminants}

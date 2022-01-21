@@ -52,7 +52,6 @@ process CONTAMINANTS {
     
     script:
     """
-  
     bwa mem -t ${task.cpus} contaminants-ref/contaminants.fasta "${reads[0]}" "${reads[1]}" | samtools view -bS > contaminants.bam
     samtools fastq -f 12 -F 256  -1 ${sample_id}_1.fq -2 ${sample_id}_2.fq contaminants.bam
     samtools stats contaminants.bam | grep ^SN | cut -f 2- |  grep "reads mapped:" > ${sample_id}.contaminants.txt
