@@ -3,8 +3,8 @@ echo Download small databases for local execution
 echo " ========================================== "
 set -euxo pipefail 
 DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-DEST="$DIR"/../DB/
-
+DEST="$DIR"/../../DB/
+mkdir -p "$DEST"
 # Download human database
 curl -L -o "$DEST"/kraken2_human_db.tar.gz "https://ndownloader.figshare.com/files/23567780"
 tar xvfz "$DEST"/kraken2_human_db.tar.gz  -C "$DEST"/
