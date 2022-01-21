@@ -6,9 +6,10 @@ Nextflow pipeline to preprocess metagenomics reads:
 
 1. Discarding failed samples (< 1000 reads)
 2. Host removal (Kraken2, tipically against _Homo sapiens_)
-3. Adapter filtering (fastp, quality filtering is disabled)
-4. Fast profiling (Kraken2) to evaluate the fluctuations in unclassified reads
-5. MultiQC report
+3. Removal of specific contaminants sequences via bwa mapping (optional)
+4. Adapter filtering (fastp, quality filtering is disabled)
+5. Fast profiling (Kraken2) to evaluate the fluctuations in unclassified reads
+6. MultiQC report
 
 ## Phylosophy
 
@@ -47,7 +48,7 @@ Two valid options are:
 ## Usage
 
 ```
-nextflow run main.nf --hostdb $DB/kraken2_human/ --krakendb $DB/std16/ --reads 'data/*_R{1,2}.fastq.gz'
+nextflow run main.nf --hostdb $DB/kraken2_human/ --krakendb $DB/std16/ --reads 'data/*_R{1,2}.fastq.gz' [--contaminants contam.fa]
 ```
 
 ## Output directory
