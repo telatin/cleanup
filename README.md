@@ -45,6 +45,8 @@ Two valid options are:
 * [Standard database with Plants and Fungi (16Gb)](https://genome-idx.s3.amazonaws.com/kraken/k2_pluspf_16gb_20210517.tar.gz): a small database as provided by [benlangmead](https://benlangmead.github.io/aws-indexes/k2). Useful for execution in local machines with limited memory.
 * [kraken2_db_uhgg_v2](http://ftp.ebi.ac.uk/pub/databases/metagenomics/mgnify_genomes/human-gut/v2.0/kraken2_db_uhgg_v2/): a gut specific database from [a unified catalogue of gastrointestinal genomes](https://www.ebi.ac.uk/about/news/service-news/uhgg-v20-released-mgnify), version 2.0
 
+:bulb: To download the human database and the standard database capped at 8Gb, you can run the `bash bin/utils/download.sh` script.
+
 ## Usage
 
 ```
