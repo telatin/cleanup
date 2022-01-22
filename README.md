@@ -49,8 +49,9 @@ Two valid options are:
 
 ## Usage
 
-```
-nextflow run main.nf --hostdb $DB/kraken2_human/ --krakendb $DB/std16/ --reads 'data/*_R{1,2}.fastq.gz' [--contaminants contam.fa]
+```bash
+nextflow run main.nf  --reads 'data/*_R{1,2}.fastq.gz' \
+   --hostdb $DB/kraken2_human/ --krakendb $DB/std16/ [--contaminants contam.fa]
 ```
 
 ## Output directory

@@ -1,4 +1,16 @@
+process GETLEN {
+    /* get estimate read length of the reads */
+    input:
+    path("*")
 
+    output:
+    path "len.txt" optional true
+
+    script:
+    """
+    seqfu head -n 1000 * | seqfu stats | cut -f 10 | tail -n 1 > len.txt
+    """
+}
 process MINREADS {
     tag "filter $sample_id"
     label 'process_low'

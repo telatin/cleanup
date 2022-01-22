@@ -37,9 +37,7 @@ process KRAKEN2_HOST {
 }  
  
 process KRAKEN2_REPORT {
-    /* 
-       fastp process to remove adapters and low quality sequences
-    */
+ 
     tag "$sample_id"
     label 'process_medium'
     publishDir "$params.outdir/kraken/", 
@@ -60,6 +58,32 @@ process KRAKEN2_REPORT {
       --memory-mapping  --paired ${reads[0]} ${reads[1]} > /dev/null
     """  
 } 
+
+process BRACKEN {
+    /* 
+      Attempt a Bracken recalibration of the reads
+    */
+    tag "$report"
+    label 'process_medium'
+    publishDir "$params.outdir/bracken/", 
+        mode: 'copy'
+
+    input:
+    path(report) 
+    path("len.txt")
+    path(db)
+    
+    output:
+    path("*bracken*") optional true
+
+ 
+    script:
+    """
+    LEN=\$(cat len.txt)
+    INPUT=$report
+    bracken -d ${db} -i ${report} -o \${INPUT/kraken2.tsv/bracken.txt} -w \${INPUT/kraken2/bracken} -r \$LEN -l S -t 10
+    """      
+}
 process KRAKEN2 {
     tag "$meta.id"
     label 'process_high'
