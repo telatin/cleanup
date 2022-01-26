@@ -63,8 +63,7 @@ The output directory contains a [MultiQC report](https://telatin.github.io/micro
 * **kraken**: kraken reports with the classification against the selected database
 * **pipeline_info**: execution [report](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_execution.html) and [timeline](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_timeline.html).
  
-## Example reports
+## Example logs
 
-* [MultiQC report](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_report.html)
 * [Execution report](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_execution.html)
 * [Timeline](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_timeline.html)
