@@ -8,7 +8,7 @@ process GETLEN {
 
     script:
     """
-    seqfu head -n 1000 * | seqfu stats | cut -f 10 | tail -n 1 > len.txt
+    seqfu cat --min-len 30 | seqfu head --skip 2 -n 4000 * | seqfu stats | cut -f 10 | tail -n 1 > len.txt
     """
 }
 process MINREADS {
@@ -85,6 +85,7 @@ process FASTP {
     input:
     tuple val(sample_id), path(reads) 
     val(minlen)
+    val(minqual)
     
     output:
     tuple val(sample_id), path("${sample_id}_R{1,2}.fastq.gz"), emit: reads
@@ -92,21 +93,20 @@ process FASTP {
     path("${sample_id}.fastp.json"), emit: json
 
     /*
-       "sed" is a hack to remove _R1 from sample names for MultiQC
-        (clean way via config "extra_fn_clean_trim:\n    - '_R1'")
+       "sed" is a hack to remove _R1 from sample names for MultiQC (clean way via config "extra_fn_clean_trim:\n    - '_R1'")
     */
+    quality_param = minqual > 0 ? "--qualified_quality_phred ${minqual}" : "--disable_quality_filtering"
     script:
     """
     fastp -w ${task.cpus} -i ${reads[0]} -I ${reads[0]} \
         -o ${sample_id}_R1.fastq.gz -O ${sample_id}_R2.fastq.gz \
         -h ${sample_id}-report.html -j ${sample_id}.fastp.json \
-        --detect_adapter_for_pe --disable_quality_filtering  \
-        -l ${minlen}  
+        --detect_adapter_for_pe ${quality_param}   \
+        --length_required ${minlen}  
     
     sed -i.bak 's/-nohost_1//g' *.json 
     sed -i.bak 's/_1.fq.gz//g' *.json
     """
-    //sed -i 's/-nohost_.//g' "$OUTDIR"/${BASENAME}.fastp.json
 }
 
 process MULTIQC {
