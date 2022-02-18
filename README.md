@@ -6,7 +6,7 @@ Nextflow pipeline to preprocess metagenomics reads:
 
 1. Discarding failed samples (< 1000 reads)
 2. Host removal (Kraken2, tipically against _Homo sapiens_)
-3. Removal of specific contaminants sequences via bwa mapping (optional)
+3. Removal of specific contaminants sequences via bwa mapping (including Sars-Cov-2, PhiX. _optional_)
 4. Adapter filtering (fastp, quality filtering is disabled)
 5. Fast profiling (Kraken2) to evaluate the fluctuations in unclassified reads
 6. MultiQC report
@@ -63,8 +63,7 @@ The output directory contains a [MultiQC report](https://telatin.github.io/micro
 * **kraken**: kraken reports with the classification against the selected database
 * **pipeline_info**: execution [report](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_execution.html) and [timeline](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_timeline.html).
  
-## Example reports
+## Example logs
 
-* [MultiQC report](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_report.html)
 * [Execution report](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_execution.html)
 * [Timeline](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_timeline.html)
