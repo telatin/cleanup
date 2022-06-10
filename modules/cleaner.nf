@@ -101,7 +101,11 @@ process FASTP {
     /*
        "sed" is a hack to remove _R1 from sample names for MultiQC (clean way via config "extra_fn_clean_trim:\n    - '_R1'")
     */
+<<<<<<< HEAD
     
+=======
+    quality_param = minqual > 0 ? "--qualified_quality_phred ${minqual}" : "--disable_quality_filtering"
+>>>>>>> 687fc6a906f080654ae143121b3a5f4cee182f13
     script:
     """
     if [[ ${minqual} -gt 0 ]]; then
@@ -112,7 +116,11 @@ process FASTP {
     fastp -w ${task.cpus} -i ${reads[0]} -I ${reads[1]} \
         -o ${sample_id}_R1.fastq.gz -O ${sample_id}_R2.fastq.gz \
         -h ${sample_id}-report.html -j ${sample_id}.fastp.json \
+<<<<<<< HEAD
         --detect_adapter_for_pe \$quality_param   \
+=======
+        --detect_adapter_for_pe ${quality_param}   \
+>>>>>>> 687fc6a906f080654ae143121b3a5f4cee182f13
         --length_required ${minlen}  
     
     sed -i.bak 's/-nohost_1//g' *.json 

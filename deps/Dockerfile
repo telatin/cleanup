@@ -1,6 +1,6 @@
-FROM condaforge/mambaforge
-COPY env.yaml /etc/env.yaml
-ENV PATH /opt/imageenv:$PATH
-RUN mamba env create -p /opt/imageenv --file /etc/env.yaml
-SHELL ["/bin/bash", "--login", "-c"]
-ENTRYPOINT ["bash", "-c", "source /opt/conda/bin/activate  /opt/imageenv && \"$@\"", "-s"]
+FROM mambaorg/micromamba:0.21.2
+COPY --chown=mambauser:mambauser  microenv.yaml /tmp/env-raw.yaml
+ARG MAMBA_DOCKERFILE_ACTIVATE=1
+RUN grep -v "^name:" /tmp/env.yaml | grep -v "^prefix:" > /tmp/env.yaml
+RUN micromamba install -y --file env.yaml && \
+     micromamba clean --all --yes
