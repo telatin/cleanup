@@ -2,3 +2,4 @@ DB
 work
 cleaned_reads/
 .nextflow*
+contaminants/*.fasta.*

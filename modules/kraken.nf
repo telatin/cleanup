@@ -59,6 +59,43 @@ process KRAKEN2_REPORT {
     """  
 } 
 
+process COMBINE_KRAKEN {
+    tag "$sample_id"
+    label 'process_low'
+    publishDir "$params.outdir/tables/", 
+        mode: 'copy'
+    
+    input:
+    tuple val(sample_id), path("*") 
+
+    
+    output:
+    path("kraken-report.tsv")
+     
+    script:
+    """
+    combine_kreports.py --reports *.kraken2.tsv -o kraken-report.tsv
+    """  
+}
+process COMBINE_BRACKEN {
+    tag "$sample_id"
+    label 'process_low'
+    publishDir "$params.outdir/tables/", 
+        mode: 'copy'
+    
+    input:
+    tuple val(sample_id), path("*") 
+
+    
+    output:
+    path("kraken-report.tsv")
+     
+    script:
+    """
+    combine_bracken_outputs.py --files *.bracken.* -o bracken-report.tsv
+    """  
+}
+
 process BRACKEN {
     /* 
       Attempt a Bracken recalibration of the reads
@@ -81,7 +118,14 @@ process BRACKEN {
     """
     LEN=\$(cat len.txt)
     INPUT=$report
-    bracken -d ${db} -i ${report} -o \${INPUT/kraken2.tsv/bracken.txt} -w \${INPUT/kraken2/bracken} -r \$LEN -l S -t 10
+
+    # Check DB file exists
+    if [[ ! -e "${db}/*\${LEN}mers.kraken" ]]; then
+        echo "Bracken DB file not found"
+    fi
+
+
+    bracken -d ${db} -i ${report} -o \${INPUT/kraken2.tsv/bracken.txt} -w \${INPUT/kraken2/bracken} -r \$LEN -l S -t 10 || echo "Bracken failed" > log.txt
     """      
 }
 process KRAKEN2 {

@@ -1,15 +1,10 @@
-/* 
- 
-*/
-
-/* 
- *   Input parameters 
- */
+/*  Input parameters   */
 nextflow.enable.dsl = 2
 params.reads = "$baseDir/nano/*_R{1,2}.fastq.gz"
+params.outdir = "$baseDir/cleanup"
 params.minlen = 50
 params.minreads = 1000
-params.outdir = "$baseDir/cleanup"
+params.minqual = 0
 params.hostdb = false
 params.krakendb = false
 params.krakendb = false
@@ -18,7 +13,7 @@ params.denovo = false
         
 // prints to the screen and to the log
 log.info """
-         GMH Cleanup pipeline (version 1.1)
+         GMH Cleanup pipeline (version 1.2)
          ===================================
          input reads  : ${params.reads}
          outdir       : ${params.outdir}
@@ -45,21 +40,15 @@ if (params.contaminants) {
   contaminantsPath = file(params.contaminants, checkIfExists: true)
 }
 
-/*
-  Modules
-*/
-
+/*    Modules  */
 include { KRAKEN2_HOST; KRAKEN2_REPORT; BRACKEN } from './modules/kraken'
 include { FASTP; MULTIQC; TRACKFILES; GETLEN; INDEX; CONTAMINANTS; MINREADS; MINREADS as MINREADS_FINALCHECK } from './modules/cleaner'
 include { DENOVO; PRODIGAL  } from './modules/denovo'
-/* 
- *   DSL2 allows to reuse channels
- */
+
 reads = Channel
         .fromFilePairs(params.reads, checkIfExists: true)
 
 
- 
 workflow {
   // Discard samples not passing the min reads filter
   MINREADS(reads, params.minreads)
@@ -78,10 +67,9 @@ workflow {
   }
   
   // Remove adapters
-  FASTP(TOFILTER.reads , params.minlen )
+  FASTP(TOFILTER.reads , params.minlen, params.minqual )
 
   // Discard again samples not passing the min reads filter (in case of heavy contaminations). 
-  // See https://www.nextflow.io/docs/latest/dsl2.html#module-aliases
   MINREADS_FINALCHECK(FASTP.out.reads, params.minreads)
 
   // Kraken2 profiling
