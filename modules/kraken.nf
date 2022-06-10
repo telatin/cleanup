@@ -77,11 +77,7 @@ process COMBINE_KRAKEN {
     combine_kreports.py --reports *.kraken2.tsv -o kraken-report.tsv
     """  
 }
-<<<<<<< HEAD
 process COMBINE_BRACKEN {
-=======
-process COMBINE_KRAKEN {
->>>>>>> 687fc6a906f080654ae143121b3a5f4cee182f13
     tag "$sample_id"
     label 'process_low'
     publishDir "$params.outdir/tables/", 
