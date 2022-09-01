@@ -12,15 +12,14 @@ process KRAKEN2_HOST {
     path db
     
     output:
-    tuple val(sample_id), path("${sample_id}-nohost_*.fq.gz"), emit: reads
-    tuple val(sample_id), path("${sample_id}-human_*.fq.gz"), emit: host
+    tuple val(sample_id), path("${sample_id}-nohost_*.fq"), emit: reads optional true
+    tuple val(sample_id), path("${sample_id}-human_*.fq.gz"), emit: host optional true
     path("${sample_id}.host.log"), emit: log
     path("${sample_id}.host.txt"), emit: txt
     path("${sample_id}.host.report"), emit: report
 
     /*
-       "sed" is a hack to remove _R1 from sample names for MultiQC
-        (clean way via config "extra_fn_clean_trim:\n    - '_R1'")
+       gz.py --verbose --force *.fq
     */
     script:
     """
@@ -32,7 +31,22 @@ process KRAKEN2_HOST {
       --memory-mapping --paired ${reads[0]} ${reads[1]} 2> ${sample_id}.host.log | \\
       countClass.py -c "Human" -u "Non-human" -o ${sample_id}.host.txt
     
-    pigz -p ${task.cpus} *.fq
+    echo "+ RENAME"
+    for i in *_1.fq;
+    do
+      mv \$i \${i/_1./_R1.}
+    done
+
+    for i in *_2.fq;
+    do
+      mv \$i \${i/_2./_R2.}
+    done
+    
+    echo "+ REMOVE EMTPY FILES"
+    rmIfEmpty.py -s fq -d . --verbose
+
+    echo "+ COMPRESS HOST READS"
+    gz.py --verbose --force *human*.fq
     """  
 }  
  

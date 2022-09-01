@@ -60,7 +60,7 @@ def checkContaminants(file):
     try:
         with open(file, 'r') as f:
             for line in f:
-                if line.startswith('reads mapped:'):
+                if line.startswith('reads mapped:') or line.startswith('#Matched'):
                     return int(line.split(':')[1].strip())
     except Exception as e:
         return "N/A"

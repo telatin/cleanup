@@ -3,3 +3,6 @@ work
 cleaned_reads/
 .nextflow*
 contaminants/*.fasta.*
+data
+__pycache__
+.DS_Store
