@@ -10,7 +10,8 @@ params.krakendb = false
 params.krakendb = false
 params.contaminants = false
 params.denovo = false
-        
+params.saveraw = false
+params.savehost = false
 // prints to the screen and to the log
 log.info """
          GMH Cleanup pipeline (version 1.6)
@@ -20,8 +21,9 @@ log.info """
          min reads    : ${params.minreads}
          host db      : ${params.hostdb}
          kraken db    : ${params.krakendb}
-         contaminants : ${params.contaminants}
-         denovo       : ${params.denovo}
+         -----------------------------------
+         Save host/raw: ${params.savehost}/${params.saveraw}
+         Contam/Denovo: ${params.contaminants}/${params.denovo}
          """
          .stripIndent()
 

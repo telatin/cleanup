@@ -139,7 +139,7 @@ process FASTP {
     label 'process_filtering'
 
     publishDir "$params.outdir/", 
-        pattern: "*gz",
+        pattern: "reads/*gz",
         mode: 'copy'
 
     input:
@@ -165,12 +165,12 @@ process FASTP {
     fi
     fastp -w ${task.cpus} -i ${reads[0]} -I ${reads[1]} \
         -o reads/${sample_id}_R1.fastq.gz -O reads/${sample_id}_R2.fastq.gz \
-        -h ${sample_id}-report.html -j ${sample_id}.fastp.json \
+        -h ${sample_id}-report.html -j mqc.json \
         --detect_adapter_for_pe \$quality_param   \
         --length_required ${minlen}  
     
-    sed -i.bak 's/-nohost_1//g' *.json 
-    sed -i.bak 's/_1.fq.gz//g' *.json
+    sed 's/-nohost_R1//g' mqc.json |sed 's/_R1//g' | sed 's/fastq.gz//g' | sed 's/fq.gz//g' > ${sample_id}.fastp.json
+    
     """
 }
 

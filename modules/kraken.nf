@@ -5,7 +5,8 @@ process KRAKEN2_HOST {
 
     publishDir "$params.outdir/host-reads/", 
         pattern: "*human*gz",
-        mode: 'copy'
+        mode: 'copy',
+        enabled: params.savehost
 
     input:
     tuple val(sample_id), path(reads) 

@@ -54,12 +54,24 @@ nextflow run main.nf  --reads 'data/*_R{1,2}.fastq.gz' \
    --hostdb $DB/kraken2_human/ --krakendb $DB/std16/ [--contaminants contam.fa]
 ```
 
+Notable options:
+* `--saveraw`: save reads after host removal but prior to FASTP filtering [default: false]
+* `--savehost`: save the reads flagged as host [default: false]
+* `--contaminants FASTA`: also filter against a fasta file [:warning: experimental]
+* `--denovo`: enable assembly
+
+Profiles:
+* `-profile test`: will test the pipeline with minimal reads and databases (requires: 8 cores, 16Gb ram)
+* `-profile nbi,slurm`: will use default location in the NBI cluster and SLURM scheduler
+* `-profile nbi --max_cpus INT --max_memory INT.GB`: will use local resources of a QIB Virtual Machine
+
 ## Output directory
 
 The output directory contains a [MultiQC report](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_report.html), and the following subdirectories:
 
 * **reads**: the main output: final reads without adapters and host contamination
-* **host-reads**: FASTQ files with the host reads (files can be empty)
+* **host-reads**: FASTQ files with the host reads (files can be empty) (requires `--savehost`)
+* **raw-reads**: FASTQ files after host removal(requires `--saveraw`)
 * **kraken**: kraken reports with the classification against the selected database
 * **pipeline_info**: execution [report](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_execution.html) and [timeline](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_timeline.html).
  

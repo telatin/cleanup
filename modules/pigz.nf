@@ -4,8 +4,9 @@ process PIGZ_READS {
     label 'process_medium'
 
     publishDir "$params.outdir/raw-reads/", 
-        pattern: "*human*gz",
-        mode: 'copy'
+        pattern: "*gz",
+        mode: 'copy',
+        enabled: params.saveraw
 
     input:
     tuple val(sample_id), path(reads) 
