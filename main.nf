@@ -13,7 +13,7 @@ params.denovo = false
         
 // prints to the screen and to the log
 log.info """
-         GMH Cleanup pipeline (version 1.2)
+         GMH Cleanup pipeline (version 1.6)
          ===================================
          input reads  : ${params.reads}
          outdir       : ${params.outdir}
@@ -42,7 +42,10 @@ if (params.contaminants) {
 
 /*    Modules  */
 include { KRAKEN2_HOST; KRAKEN2_REPORT; BRACKEN } from './modules/kraken'
-include { FASTP; MULTIQC; TRACKFILES; GETLEN; INDEX; CONTAMINANTS; MINREADS; MINREADS as MINREADS_FINALCHECK } from './modules/cleaner'
+include { FASTP; MULTIQC; TRACKFILES; GETLEN; INDEX; 
+          REMOVE_CONTAMINANTS; REMOVE_MAPPED; MAP_CONTAMINANTS; 
+          MINREADS; MINREADS as MINREADS_FINALCHECK } from './modules/cleaner'
+include { PIGZ_READS } from './modules/pigz'
 include { DENOVO; PRODIGAL  } from './modules/denovo'
 
 reads = Channel
@@ -55,23 +58,21 @@ workflow {
 
   // Host removal (Human reads)
   KRAKEN2_HOST( MINREADS.out.reads, hostPath)
-
+  PIGZ_READS(KRAKEN2_HOST.out.reads)
   // If a FASTA contaminats is passed, filter the reads against it with BWA
   if (params.contaminants == false) {
-    TOFILTER = KRAKEN2_HOST.out
+    TOFILTER = PIGZ_READS.out
     CONTAMLOG = Channel.empty()
   } else {
-    INDEX(contaminantsPath)
-    TOFILTER = CONTAMINANTS( KRAKEN2_HOST.out.reads, INDEX.out )
-    CONTAMLOG = TOFILTER.contaminants
+    TOFILTER = REMOVE_CONTAMINANTS(PIGZ_READS, contaminantsPath )
+    CONTAMLOG = TOFILTER.stats
   }
   
   // Remove adapters
-  FASTP(TOFILTER.reads , params.minlen, params.minqual )
+  MINREADS_FINALCHECK(TOFILTER.reads, params.minreads)
+  FASTP(MINREADS_FINALCHECK.out.reads , params.minlen, params.minqual )
 
-  // Discard again samples not passing the min reads filter (in case of heavy contaminations). 
-  MINREADS_FINALCHECK(FASTP.out.reads, params.minreads)
-
+  
   // Kraken2 profiling
   KRAKEN2_REPORT( FASTP.out.reads, reportPath )   
   // Guess length for Bracken
