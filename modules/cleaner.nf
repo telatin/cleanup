@@ -12,7 +12,7 @@ process GETLEN {
     """
 }
 process MINREADS {
-    tag "filter $sample_id"
+    tag "$sample_id"
     label 'process_low'
 
     input:
