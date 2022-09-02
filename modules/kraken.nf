@@ -17,7 +17,7 @@ process KRAKEN2_HOST {
     tuple val(sample_id), path("${sample_id}-human_*.fq.gz"), emit: host optional true
     path("${sample_id}.host.log"), emit: log
     path("${sample_id}.host.txt"), emit: txt
-    path("${sample_id}.host.report"), emit: report
+    tuple val(sample_id), path("${sample_id}.host.report"), emit: report
 
     /*
        gz.py --verbose --force *.fq

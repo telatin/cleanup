@@ -6,3 +6,5 @@ contaminants/*.fasta.*
 data
 __pycache__
 .DS_Store
+phi.tsv
+test.tsv

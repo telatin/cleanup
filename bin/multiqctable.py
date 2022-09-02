@@ -35,7 +35,11 @@ report_header = """
 #         title: '6. Contaminants reads'
 #         description: 'Number of contaminants reads (optional step)'
 #         format: '{:,.0f}'
-Sample\tcol1\tcol2\tcol3\tcol4\tcol5\tcol6
+#     col7:
+#         title: '7. HG-Check'
+#         description: 'Ratio of large chromosomes/total human chromosomes'
+#         format: '{:,.0f}'
+Sample\tcol1\tcol2\tcol3\tcol4\tcol5\tcol6\tcol7
 """
 
 def loadHost(filename):
@@ -65,12 +69,20 @@ def checkContaminants(file):
     except Exception as e:
         return "N/A"
 
+def slurp(filename):
+    try:
+        with open(filename, 'r') as f:
+            return f.read()
+    except Exception as e:
+        return "N/A"
+        
 if __name__ == "__main__":
     args = argparse.ArgumentParser(description='Generate a MultiQC ready table')
     args.add_argument('-j', '--fastp-json', help='FASTP json files', nargs='+')
     args.add_argument('-s', '--json-suffix', help='Suffix of the json files [default: %(default)s]', default='.fastp.json')
     args.add_argument('-z', '--host-suffix', help='Suffix of the host files [default: %(default)s]', default='.host.txt')
     args.add_argument('--contam-suffix', help='Suffix of the host files [default: %(default)s]', default='.contaminants.txt')
+    args.add_argument('--ratiocheck-suffix', help='Suffix of the ratio check files [default: %(default)s]', default='.ratio.txt')
     args.add_argument('-o', '--output', help='Output file [default: %(default)s]', default='summary_mqc.txt')
     opts = args.parse_args()
 
@@ -103,6 +115,9 @@ if __name__ == "__main__":
         # 6. Contaminants
         contamfile = file.replace(opts.json_suffix, opts.contam_suffix)
         row.append(str( checkContaminants(contamfile)))
+        # 7. RatioCheck
+        ratiocheckfile = file.replace(opts.json_suffix, opts.ratiocheck_suffix)
+        row.append( str( slurp(ratiocheckfile) ))
         print("\t".join(row), file=outfile)
 
 

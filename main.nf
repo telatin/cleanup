@@ -47,9 +47,9 @@ include { KRAKEN2_HOST; KRAKEN2_REPORT; BRACKEN } from './modules/kraken'
 include { FASTP; MULTIQC; TRACKFILES; GETLEN; INDEX; 
           REMOVE_CONTAMINANTS; REMOVE_MAPPED; MAP_CONTAMINANTS; 
           MINREADS; MINREADS as MINREADS_FINALCHECK } from './modules/cleaner'
-include { PIGZ_READS } from './modules/pigz'
+include { PIGZ_READS }        from './modules/pigz'
 include { DENOVO; PRODIGAL  } from './modules/denovo'
-
+include { CHECK_REPORT }      from './modules/hg'
 reads = Channel
         .fromFilePairs(params.reads, checkIfExists: true)
 
@@ -60,7 +60,10 @@ workflow {
 
   // Host removal (Human reads)
   KRAKEN2_HOST( MINREADS.out.reads, hostPath)
+  CHECK_REPORT(KRAKEN2_HOST.out.report)
   PIGZ_READS(KRAKEN2_HOST.out.reads)
+
+  // Kraken2 Host report (if using custom human db)
   // If a FASTA contaminats is passed, filter the reads against it with BWA
   if (params.contaminants == false) {
     TOFILTER = PIGZ_READS.out
@@ -89,6 +92,6 @@ workflow {
     PRODIGAL( CONTIGS )
   }
   // MultiQC
-  TRACKFILES(FASTP.out.json.mix( KRAKEN2_HOST.out.txt, CONTAMLOG ).collect() )
+  TRACKFILES(FASTP.out.json.mix( KRAKEN2_HOST.out.txt, CONTAMLOG, CHECK_REPORT.out ).collect() )
   MULTIQC( FASTP.out.json.mix( KRAKEN2_REPORT.out, TRACKFILES.out ).collect() )
 }
