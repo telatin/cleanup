@@ -1,5 +1,9 @@
 # cleanup
 
+[![nextflow-ci](https://github.com/telatin/cleanup/actions/workflows/ci.yaml/badge.svg)](https://github.com/telatin/cleanup/actions/workflows/ci.yaml)
+[![last commit](https://img.shields.io/github/last-commit/telatin/cleanup)](https://github.com/telatin/cleanup)
+[![last commit](https://img.shields.io/github/v/release/telatin/cleanup)](https://github.com/telatin/cleanup)
+
 ![Cleanup Pipeline](cleanup.jpg)
 
 Nextflow pipeline to preprocess metagenomics reads:
@@ -32,7 +36,8 @@ Kraken2 database for the profiling (via `--krakendb`).
 ### Host database
 
 The Human database can be downloaded as follows (RefSeq version of GRCh38.p13):
-```
+
+```bash
 curl -L -o kraken2_human_db.tar.gz https://ndownloader.figshare.com/files/23567780
 tar -xzvf kraken2_human_db.tar.gz
 ```
@@ -55,12 +60,14 @@ nextflow run main.nf  --reads 'data/*_R{1,2}.fastq.gz' \
 ```
 
 Notable options:
+
 * `--saveraw`: save reads after host removal but prior to FASTP filtering [default: false]
 * `--savehost`: save the reads flagged as host [default: false]
 * `--contaminants FASTA`: also filter against a fasta file [:warning: experimental]
 * `--denovo`: enable assembly
 
 Profiles:
+
 * `-profile test`: will test the pipeline with minimal reads and databases (requires: 8 cores, 16Gb ram)
 * `-profile nbi,slurm`: will use default location in the NBI cluster and SLURM scheduler
 * `-profile nbi --max_cpus INT --max_memory INT.GB`: will use local resources of a QIB Virtual Machine
@@ -74,7 +81,7 @@ The output directory contains a [MultiQC report](https://telatin.github.io/micro
 * **raw-reads**: FASTQ files after host removal(requires `--saveraw`)
 * **kraken**: kraken reports with the classification against the selected database
 * **pipeline_info**: execution [report](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_execution.html) and [timeline](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_timeline.html).
- 
+
 ## Example logs
 
 * [Execution report](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_execution.html)
