@@ -14,7 +14,7 @@ env:
 jobs:
   test:
     name: Run pipeline with test data
-    # Only run on push if this is the nf-core dev branch (merged PRs)
+    # CHANGE_HERE: repository name
     if: "${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'telatin/cleanup') }}"
     runs-on: ubuntu-latest
     strategy:
@@ -41,7 +41,8 @@ jobs:
           wget -qO- get.nextflow.io | bash
           sudo mv nextflow /usr/local/bin/
       - name: Test pipeline
+        # CHANGE_HERE: directory name after repo
         run: |
-          nextflow run ${GITHUB_WORKSPACE} -profile test || find /home/runner/work/getreads/getreads/work/ -name "*.log" | xargs grep "^."
+          nextflow run ${GITHUB_WORKSPACE} -profile test || find /home/runner/work/cleanup/cleanup/work/ -name "*.log" | xargs grep "^."
           
          
