@@ -1,0 +1,3 @@
+#!/bin/bash
+find -name ".nextflow" | xargs rm -rf
+find -name ".nextflow.*" | xargs rm
