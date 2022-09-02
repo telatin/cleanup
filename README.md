@@ -35,7 +35,9 @@ Kraken2 database for the profiling (via `--krakendb`).
 
 ### Host database
 
-The Human database can be downloaded as follows (RefSeq version of GRCh38.p13):
+A custom database with masked/filtered Human genome, PhiX and Sars-Cov-2 is [available from Zenodo](https://zenodo.org/record/7044072).
+
+Alternatively, a plain Human database can be downloaded as follows (RefSeq version of GRCh38.p13):
 
 ```bash
 curl -L -o kraken2_human_db.tar.gz https://ndownloader.figshare.com/files/23567780
