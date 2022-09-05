@@ -35,7 +35,9 @@ Kraken2 database for the profiling (via `--krakendb`).
 
 ### Host database
 
-The Human database can be downloaded as follows (RefSeq version of GRCh38.p13):
+A custom database with masked/filtered Human genome, PhiX and Sars-Cov-2 is [available from Zenodo](https://zenodo.org/record/7044072).
+
+Alternatively, a plain Human database can be downloaded as follows (RefSeq version of GRCh38.p13):
 
 ```bash
 curl -L -o kraken2_human_db.tar.gz https://ndownloader.figshare.com/files/23567780
@@ -56,7 +58,7 @@ Two valid options are:
 
 ```bash
 nextflow run main.nf  --reads 'data/*_R{1,2}.fastq.gz' \
-   --hostdb $DB/kraken2_human/ --krakendb $DB/std16/ [--contaminants contam.fa]
+   --hostdb $DB/kraken2_human/ --krakendb $DB/std16/ [--contaminants contam.fa] [-profile docker]
 ```
 
 Notable options:
@@ -68,9 +70,11 @@ Notable options:
 
 Profiles:
 
+* `-profile docker`: pull dependencies from Docker
 * `-profile test`: will test the pipeline with minimal reads and databases (requires: 8 cores, 16Gb ram)
 * `-profile nbi,slurm`: will use default location in the NBI cluster and SLURM scheduler
 * `-profile nbi --max_cpus INT --max_memory INT.GB`: will use local resources of a QIB Virtual Machine
+
 
 ## Output directory
 
