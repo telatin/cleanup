@@ -38,7 +38,6 @@ report_header = """
 #     col7:
 #         title: '7. HG-Check'
 #         description: 'Ratio of large chromosomes/total human chromosomes'
-#         format: '{:,.0f}'
 Sample\tcol1\tcol2\tcol3\tcol4\tcol5\tcol6\tcol7
 """
 
@@ -75,7 +74,7 @@ def slurp(filename):
             return f.read()
     except Exception as e:
         return "N/A"
-        
+
 if __name__ == "__main__":
     args = argparse.ArgumentParser(description='Generate a MultiQC ready table')
     args.add_argument('-j', '--fastp-json', help='FASTP json files', nargs='+')
