@@ -14,7 +14,7 @@ process KRAKEN2_HOST {
     
     output:
     tuple val(sample_id), path("${sample_id}-nohost_*.fq"), emit: reads optional true
-    tuple val(sample_id), path("${sample_id}-human_*.fq.gz"), emit: host optional true
+    tuple val(sample_id), path("${sample_id}-human_*.fq"), emit: host optional true
     path("${sample_id}.host.log"), emit: log
     path("${sample_id}.host.txt"), emit: txt
     tuple val(sample_id), path("${sample_id}.host.report"), emit: report
@@ -46,10 +46,11 @@ process KRAKEN2_HOST {
     echo "+ REMOVE EMTPY FILES"
     rmIfEmpty.py -s fq -d . --verbose
 
-    echo "+ COMPRESS HOST READS"
-    gz.py --verbose --force *human*.fq
+    #echo "+ COMPRESS HOST READS"
+    #gz.py --verbose --force *human*.fq
     """  
 }  
+ 
  
 process KRAKEN2_REPORT {
  

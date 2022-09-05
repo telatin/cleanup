@@ -1,5 +1,6 @@
 /*  Input parameters   */
 nextflow.enable.dsl = 2
+params.dbdir = false
 params.reads = "$baseDir/nano/*_R{1,2}.fastq.gz"
 params.outdir = "$baseDir/cleanup"
 params.minlen = 50
@@ -12,9 +13,11 @@ params.contaminants = false
 params.denovo = false
 params.saveraw = false
 params.savehost = false
+
+def dbdir = params.dbdir == false ? file("$baseDir/databases/") : file(params.dbdir)
 // prints to the screen and to the log
 log.info """
-         GMH Cleanup pipeline (version 1.3)
+         GMH Cleanup pipeline (version 1.4)
          ===================================
          input reads  : ${params.reads}
          outdir       : ${params.outdir}
@@ -27,34 +30,49 @@ log.info """
          """
          .stripIndent()
 
-/* 
-   check reference path exists 
-*/
 
-def hostPath = file(params.hostdb, checkIfExists: true)
-file("${params.hostdb}/hash.k2d", checkIfExists: true)
 
-def reportPath = file(params.krakendb, checkIfExists: true)
-file("${params.krakendb}/hash.k2d", checkIfExists: true)
 
-def contaminantsPath = false
-if (params.contaminants) {
-  contaminantsPath = file(params.contaminants, checkIfExists: true)
-}
 
 /*    Modules  */
 include { KRAKEN2_HOST; KRAKEN2_REPORT; BRACKEN } from './modules/kraken'
 include { FASTP; MULTIQC; TRACKFILES; GETLEN; INDEX; 
           REMOVE_CONTAMINANTS; REMOVE_MAPPED; MAP_CONTAMINANTS; 
           MINREADS; MINREADS as MINREADS_FINALCHECK } from './modules/cleaner'
-include { PIGZ_READS }        from './modules/pigz'
+include { PIGZ_READS; PIGZ_HOST }        from './modules/pigz'
 include { DENOVO; PRODIGAL  } from './modules/denovo'
-include { CHECK_REPORT }      from './modules/hg'
+include { CHECK_REPORT;  }      from './modules/hg'
+include { GETHOSTDB; GETKRAKENDB }      from './modules/db' 
+
+workflow getdb {
+  log.info """
+  Downloading databases to: ${dbdir}
+  """
+  GETHOSTDB(dbdir)
+  GETKRAKENDB(dbdir)
+}
 reads = Channel
         .fromFilePairs(params.reads, checkIfExists: true)
 
-
 workflow {
+
+    /* Check mandatory arguments */
+  if (params.hostdb == false) { log.error("Host database not specified (--hostdb)"); exit(1) }
+  if (params.krakendb == false) { log.error("Host database not specified (--krakendb)"); exit(1) }
+  /* 
+    check reference path exists 
+  */
+
+  def hostPath = file(params.hostdb, checkIfExists: true)
+  file("${params.hostdb}/hash.k2d", checkIfExists: true)
+
+  def reportPath = file(params.krakendb, checkIfExists: true)
+  file("${params.krakendb}/hash.k2d", checkIfExists: true)
+
+  def contaminantsPath = false
+  if (params.contaminants) {
+    contaminantsPath = file(params.contaminants, checkIfExists: true)
+  }
   // Discard samples not passing the min reads filter
   MINREADS(reads, params.minreads)
 
@@ -62,6 +80,7 @@ workflow {
   KRAKEN2_HOST( MINREADS.out.reads, hostPath)
   CHECK_REPORT(KRAKEN2_HOST.out.report)
   PIGZ_READS(KRAKEN2_HOST.out.reads)
+  PIGZ_HOST(KRAKEN2_HOST.out.host)
 
   // Kraken2 Host report (if using custom human db)
   // If a FASTA contaminats is passed, filter the reads against it with BWA

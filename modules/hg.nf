@@ -19,3 +19,6 @@ process CHECK_REPORT {
     check-report.py ${report} > ${sample_id}.ratio.txt
     """  
 }  
+
+
+  
