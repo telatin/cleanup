@@ -38,7 +38,7 @@ log.info """
 include { KRAKEN2_HOST; KRAKEN2_REPORT; BRACKEN } from './modules/kraken'
 include { FASTP; MULTIQC; TRACKFILES; GETLEN; INDEX; 
           REMOVE_CONTAMINANTS; REMOVE_MAPPED; MAP_CONTAMINANTS; 
-          MINREADS; MINREADS as MINREADS_FINALCHECK } from './modules/cleaner'
+          MINREADS; MINREADS as MINREADS_FINALCHECK; HOSTQC } from './modules/cleaner'
 include { PIGZ_READS; PIGZ_HOST }        from './modules/pigz'
 include { DENOVO; PRODIGAL  } from './modules/denovo'
 include { CHECK_REPORT;  }      from './modules/hg'
@@ -81,7 +81,7 @@ workflow {
   CHECK_REPORT(KRAKEN2_HOST.out.report)
   PIGZ_READS(KRAKEN2_HOST.out.reads)
   PIGZ_HOST(KRAKEN2_HOST.out.host)
-
+  HOSTQC(KRAKEN2_HOST.out.report.map{ it -> it[1] }.collect())
   // Kraken2 Host report (if using custom human db)
   // If a FASTA contaminats is passed, filter the reads against it with BWA
   if (params.contaminants == false) {

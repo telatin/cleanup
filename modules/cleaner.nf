@@ -204,3 +204,21 @@ process TRACKFILES {
     multiqctable.py -j *json
     """
 } 
+
+process HOSTQC {
+    label 'process_low'
+    publishDir "$params.outdir/", 
+        mode: 'copy'
+        
+    input:
+    path '*'  
+    
+    output:
+    path 'host-qc'
+     
+    script:
+    """
+    mkdir -p host-qc
+    multiqc -f -o host-qc .
+    """
+} 

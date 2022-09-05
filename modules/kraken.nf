@@ -188,3 +188,4 @@ process KRAKEN2 {
     END_VERSIONS
     """
 }
+
