@@ -3,34 +3,55 @@ nextflow.enable.dsl = 2
 params.dbdir = false
 params.reads = "$baseDir/nano/*_R{1,2}.fastq.gz"
 params.outdir = "$baseDir/cleanup"
+
+// Filtering options
 params.minlen = 50
 params.minreads = 1000
 params.minqual = 0
+
+// Databases
 params.hostdb = false
 params.krakendb = false
-params.krakendb = false
-params.contaminants = false
-params.denovo = false
+
+// Extra features
 params.saveraw = false
 params.savehost = false
 
+// Experimental
+params.contaminants = false
+params.denovo = false
+
 def dbdir = params.dbdir == false ? file("$baseDir/databases/") : file(params.dbdir)
+
+// Splash message labels
+def labelSaveReads = params.saveraw ? "Save_Raw_Reads" : ""
+def labelSaveHost = params.savehost ? "Save_Host_Reads" : ""
+def labelContaminants = params.contaminants ? "Remove_Contaminants" : ""
+def labelDeNovo = params.denovo ? "Do_DeNovo" : ""
+def labelNone = params.saveraw || params.savehost || params.contaminants || params.denovo ? "" : "None"
+
 // prints to the screen and to the log
 log.info """
          GMH Cleanup pipeline (version 1.4)
          ===================================
-         input reads  : ${params.reads}
-         outdir       : ${params.outdir}
-         min reads    : ${params.minreads}
-         host db      : ${params.hostdb}
-         kraken db    : ${params.krakendb}
-         -----------------------------------
-         Save host/raw: ${params.savehost}/${params.saveraw}
-         Contam/Denovo: ${params.contaminants}/${params.denovo}
          """
          .stripIndent()
 
-
+if (params.dbdir == false) {
+  log.info """
+            input reads  : ${params.reads}
+            outdir       : ${params.outdir}
+            min reads    : ${params.minreads}
+            host db      : ${params.hostdb}
+            kraken db    : ${params.krakendb}
+            -----------------------------------
+            Extras       : ${labelNone} ${labelSaveReads} ${labelSaveHost} ${labelDeNovo} ${labelContaminants}
+            """
+            .stripIndent()
+} else {
+  log.info """Downloading databases to: ${dbdir}
+  """.stripIndent()
+}
 
 
 
@@ -42,12 +63,11 @@ include { FASTP; MULTIQC; TRACKFILES; GETLEN; INDEX;
 include { PIGZ_READS; PIGZ_HOST }        from './modules/pigz'
 include { DENOVO; PRODIGAL  } from './modules/denovo'
 include { CHECK_REPORT;  }      from './modules/hg'
-include { GETHOSTDB; GETKRAKENDB }      from './modules/db' 
+include { GETHOSTDB; GETKRAKENDB; GETCHECKDB }      from './modules/db' 
 
 workflow getdb {
-  log.info """
-  Downloading databases to: ${dbdir}
-  """
+  /* Download standard databases */
+  GETCHECKDB(dbdir)
   GETHOSTDB(dbdir)
   GETKRAKENDB(dbdir)
 }
@@ -56,7 +76,7 @@ reads = Channel
 
 workflow {
 
-    /* Check mandatory arguments */
+  /* Check mandatory arguments */
   if (params.hostdb == false) { log.error("Host database not specified (--hostdb)"); exit(1) }
   if (params.krakendb == false) { log.error("Host database not specified (--krakendb)"); exit(1) }
   /* 
@@ -73,6 +93,7 @@ workflow {
   if (params.contaminants) {
     contaminantsPath = file(params.contaminants, checkIfExists: true)
   }
+  
   // Discard samples not passing the min reads filter
   MINREADS(reads, params.minreads)
 
