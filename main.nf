@@ -38,8 +38,7 @@ log.info """
          .stripIndent()
 
 if (params.dbdir == false) {
-  log.info """
-            input reads  : ${params.reads}
+  log.info """input reads  : ${params.reads}
             outdir       : ${params.outdir}
             min reads    : ${params.minreads}
             host db      : ${params.hostdb}
