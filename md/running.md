@@ -11,33 +11,38 @@ nextflow run telatin/cleanup -r main -profile nbi,slurm \
 ## Runtime output
 
 ```text
-GMH Cleanup pipeline (version 1.4)
-===================================
-input reads  : reads/*_{1,2}.fastq.gz
-outdir       : cleaned_v2
-min reads    : 1000
-host db      : cleanup-db/
-kraken db    : gutcheck-db
------------------------------------
-Save host/raw: true/false
-Contam/Denovo: false/false
+N E X T F L O W  ~  version 21.10.6
 
-executor >  slurm (74)
-[8d/2b0896] process > MINREADS (L15)             [100%] 36 of 36, cached: 36 ✔
-[58/6f8d66] process > KRAKEN2_HOST (L2)          [100%] 36 of 36, cached: 36 ✔
-[4f/b0bf10] process > CHECK_REPORT (L2)          [100%] 36 of 36, cached: 36 ✔
-[cd/d823b9] process > PIGZ_READS (L2)            [100%] 36 of 36, cached: 36 ✔
-[33/b35b6a] process > MINREADS_FINALCHECK (L2)   [100%] 36 of 36, cached: 36 ✔
-[5e/25d1e3] process > FASTP (L2)                 [100%] 36 of 36, cached: 36 ✔
-[b3/d12a5b] process > KRAKEN2_REPORT (L2)        [100%] 36 of 36 ✔
-[c0/f3ff8d] process > GETLEN                     [100%] 1 of 1, cached: 1 ✔
-[2d/f9b87a] process > BRACKEN (P3-8.kraken2.tsv) [100%] 36 of 36 ✔
-[a2/506298] process > TRACKFILES                 [100%] 1 of 1 ✔
-[d2/469a5a] process > MULTIQC                    [100%] 1 of 1 ✔
-WARN: To render the execution DAG in the required format it is required to install Graphviz -- See http://www.graphviz.org for more info.
-Completed at: 05-Sep-2022 10:08:54
-Duration    : 23m 24s
-CPU hours   : 81.1 (87.3% cached)
-Succeeded   : 74
-Cached      : 217
+GMH Cleanup pipeline (version 1.4)
+====================================
+
+reads        : sub/*_R{1,2}.fastq.gz
+outdir       : ./cleaned_reads/
+min reads    : 1000
+host db      : /qib/platforms/Informatics/transfer/outgoing/databases/kraken2/cleanup-db
+kraken db    : /qib/platforms/Informatics/transfer/outgoing/databases/kraken2/gutcheck-db
+-----------------------------------
+Extras       : None
+
+Monitor the execution with Nextflow Tower using this url https://tower.nf/user/andreatelatin-gh/watch/2CxGJczqNUEaez
+executor >  slurm (49)
+[30/52c42a] process > MINREADS (A02)            [100%] 4 of 4 ✔
+[e7/fef238] process > ILLUMINA_INDEX (A02)      [100%] 4 of 4 ✔
+[e1/40efdc] process > ILLUMINA_TABLE            [100%] 1 of 1 ✔
+[d6/8eecc2] process > KRAKEN2_HOST (A01)        [100%] 4 of 4 ✔
+[e4/dc8635] process > CHECK_REPORT (A01)        [100%] 4 of 4 ✔
+[29/058805] process > PIGZ_READS (A01)          [100%] 4 of 4 ✔
+[67/66a1dc] process > PIGZ_HOST (A01)           [100%] 4 of 4 ✔
+[fa/d49d1a] process > HOSTQC                    [100%] 1 of 1 ✔
+[3c/2b725b] process > MINREADS_FINALCHECK (A01) [100%] 4 of 4 ✔
+[2a/fa48cc] process > RELABEL (A01)             [100%] 4 of 4 ✔
+[49/8dfd60] process > FASTP (B10)               [100%] 4 of 4 ✔
+[d2/20c1c2] process > KRAKEN2_REPORT (B10)      [100%] 4 of 4 ✔
+[33/0b35b4] process > GETLEN                    [100%] 1 of 1 ✔
+[1e/d365d5] process > BRACKEN (B10.kraken2.tsv) [100%] 4 of 4 ✔
+[d6/e51310] process > TRACKFILES                [100%] 1 of 1 ✔
+[6f/4fab8c] process > MULTIQC                   [100%] 1 of 1 ✔
+Completed at: 05-Jan-2023 15:47:08
+Duration    : 36m 10s
+CPU hours   : 17.7
 ```
