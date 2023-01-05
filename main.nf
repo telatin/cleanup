@@ -2,7 +2,7 @@
 nextflow.enable.dsl = 2
 params.dbdir = false
 params.reads = "$baseDir/nano/*_R{1,2}.fastq.gz"
-params.outdir = "$baseDir/cleanup"
+params.outdir = "cleanup-output"
 
 // Filtering options
 params.minlen = 50
@@ -38,7 +38,8 @@ log.info """
          .stripIndent()
 
 if (params.dbdir == false) {
-  log.info """input reads  : ${params.reads}
+  log.info """
+            reads        : ${params.reads}
             outdir       : ${params.outdir}
             min reads    : ${params.minreads}
             host db      : ${params.hostdb}
@@ -58,7 +59,8 @@ if (params.dbdir == false) {
 include { KRAKEN2_HOST; KRAKEN2_REPORT; BRACKEN } from './modules/kraken'
 include { FASTP; MULTIQC; TRACKFILES; GETLEN; INDEX; 
           REMOVE_CONTAMINANTS; REMOVE_MAPPED; MAP_CONTAMINANTS; 
-          MINREADS; MINREADS as MINREADS_FINALCHECK; HOSTQC } from './modules/cleaner'
+          MINREADS; MINREADS as MINREADS_FINALCHECK; HOSTQC; RELABEL;
+          ILLUMINA_INDEX; ILLUMINA_TABLE} from './modules/cleaner'
 include { PIGZ_READS; PIGZ_HOST }        from './modules/pigz'
 include { DENOVO; PRODIGAL  } from './modules/denovo'
 include { CHECK_REPORT;  }      from './modules/hg'
@@ -74,7 +76,7 @@ reads = Channel
         .fromFilePairs(params.reads, checkIfExists: true)
 
 workflow {
-
+KRAKEN2_HOST
   /* Check mandatory arguments */
   if (params.hostdb == false) { log.error("Host database not specified (--hostdb)"); exit(1) }
   if (params.krakendb == false) { log.error("Host database not specified (--krakendb)"); exit(1) }
@@ -95,6 +97,10 @@ workflow {
   
   // Discard samples not passing the min reads filter
   MINREADS(reads, params.minreads)
+  
+  // Extract illumina indexes
+  ILLUMINA_INDEX(MINREADS.out.reads)
+  ILLUMINA_TABLE(ILLUMINA_INDEX.out.collect())
 
   // Host removal (Human reads)
   KRAKEN2_HOST( MINREADS.out.reads, hostPath)
@@ -114,7 +120,8 @@ workflow {
   
   // Remove adapters
   MINREADS_FINALCHECK(TOFILTER.reads, params.minreads)
-  FASTP(MINREADS_FINALCHECK.out.reads , params.minlen, params.minqual )
+  RELABEL(MINREADS_FINALCHECK.out.reads )
+  FASTP(RELABEL.out, params.minlen, params.minqual )
 
   
   // Kraken2 profiling
@@ -132,5 +139,5 @@ workflow {
   }
   // MultiQC
   TRACKFILES(FASTP.out.json.mix( KRAKEN2_HOST.out.txt, CONTAMLOG, CHECK_REPORT.out ).collect() )
-  MULTIQC( FASTP.out.json.mix( KRAKEN2_REPORT.out, TRACKFILES.out ).collect() )
+  MULTIQC( FASTP.out.json.mix( KRAKEN2_REPORT.out, TRACKFILES.out, ILLUMINA_TABLE.out ).collect() )
 }

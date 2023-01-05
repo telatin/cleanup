@@ -11,6 +11,23 @@ process GETLEN {
     seqfu cat --min-len 30 | seqfu head --skip 2 -n 4000 * | seqfu stats | cut -f 10 | tail -n 1 > len.txt
     """
 }
+
+process RELABEL {
+    /* rename the reads also for Kneadata sanity */
+    tag "$sample_id"
+
+    input:
+    tuple val(sample_id), path(reads) 
+
+    output:
+    tuple val(sample_id), path(reads) 
+
+    script:
+    """
+    seqfu cat --strip-comments --strip-name --prefix ${sample_id}. ${reads[0]} > ${sample_id}_R1.fastq
+    seqfu cat --strip-comments --strip-name --prefix ${sample_id}. ${reads[1]} > ${sample_id}_R2.fastq
+    """   
+}
 process MINREADS {
     tag "$sample_id"
     label 'process_low'
@@ -28,12 +45,15 @@ process MINREADS {
     TOT=\$(seqfu head -n ${min} ${reads[0]} | seqfu count | cut -f 2 )
     echo "HEAD READS ${reads[0]}: \$TOT"
     mkdir -p pass
+    # Seqfu head will get always UP TO ${min} reads, so we need to check if we have enough (not -gt!)
     if [[ \$TOT -eq ${min} ]]; then
         echo "PASS"
         mv ${reads[0]} pass/${sample_id}_R1.fastq.gz
         mv ${reads[1]} pass/${sample_id}_R2.fastq.gz
+    else
+        echo "FAIL: \$TOT < ${min}"
     fi
-    file ${reads[0]}
+    #file ${reads[0]}
     
     """
 }
@@ -170,9 +190,43 @@ process FASTP {
         --length_required ${minlen}  
     
     sed 's/-nohost_R1//g' mqc.json |sed 's/_R1//g' | sed 's/fastq.gz//g' | sed 's/fq.gz//g' > ${sample_id}.fastp.json
-    
+    g "$sample_id"
     """
 }
+process ILLUMINA_INDEX {
+    
+    tag "$sample_id"
+    label 'process_filtering'
+
+    input:
+    tuple val(sample_id), path(reads) 
+    
+    output:
+    path("${sample_id}.index.tsv") optional true
+
+ 
+    script:
+    """
+    fu-index --max-reads 20000 --min-ratio 0.8 ${reads[0]} ${reads[1]} > ${sample_id}.index.tsv
+    """
+}
+
+process ILLUMINA_TABLE {
+    
+    label 'process_filtering'
+
+    input:
+    path("*.tsv")    
+    output:
+    path("index_mqc.txt") optional true
+
+ 
+    script:
+    """
+    indexTable.py *.tsv -o index_mqc.txt
+    """
+}
+
 
 process MULTIQC {
     label 'process_low'
@@ -183,11 +237,11 @@ process MULTIQC {
     path '*'  
     
     output:
-    path 'multiqc_*'
+    path 'multiqc_*' optional true
      
     script:
     """
-    multiqc . 
+    multiqc --force . 
     """
 } 
 
