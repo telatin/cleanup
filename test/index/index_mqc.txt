@@ -1,0 +1,38 @@
+# plot_type: 'table'
+# section_name: 'Illumina indexes'
+# description: 'Index data as found in the FASTQ files'
+# pconfig:
+#     namespace: 'Cust Data'
+# headers:
+#     col1:
+#         title: 'Index'
+#         description: 'Detected Illumina index'
+#         placement: 20
+#     col2:
+#         title: 'Ratio'
+#         description: 'Ratio of reads with the most common index on the total'
+#         format: '{:,.2f}'
+#         placement: 30
+#     col3:
+#         title: 'PASS'
+#         description: 'Enough reads have the same index'
+#         placement: 11
+#     col4:
+#         title: 'Instrument'
+#         description: 'Intrument ID'
+#         placement: 50
+#         format: '{:,.0f}'
+#     col5:
+#         title: 'Run'
+#         description: 'Run'
+#         placement: 60
+#         format: '{:,.0f}'
+#     col6:
+#         title: 'Flowcell'
+#         description: 'Ratio of large chromosomes/total human chromosomes'
+#         placement: 70
+#         format: '{:,.0f}'
+Sample	col1	col2	col3	col4	col5	col6
+Sample100	CTCATCAG+TACTAGCG	1.0	PASS	A00709	n_421	H3TGLDSX5
+Sample101	TGTACCGT+CCTAGAGA	1.0	PASS	A00709	n_421	H3TGLDSX5
+Sample103	CACGTTGT+ACACCTCA	1.0	PASS	A00709	n_421	H3TGLDSX5
