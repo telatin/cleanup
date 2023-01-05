@@ -190,7 +190,6 @@ process FASTP {
         --length_required ${minlen}  
     
     sed 's/-nohost_R1//g' mqc.json |sed 's/_R1//g' | sed 's/fastq.gz//g' | sed 's/fq.gz//g' > ${sample_id}.fastp.json
-    g "$sample_id"
     """
 }
 process ILLUMINA_INDEX {
@@ -241,6 +240,8 @@ process MULTIQC {
      
     script:
     """
+    # Old MultiQC will crash with Kraken2 reports 100% unclassified
+    #fixKrakenReports.py *.kraken2.tsv
     multiqc --force . 
     """
 } 

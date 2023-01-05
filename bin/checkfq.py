@@ -7,6 +7,8 @@ Pedantic check of fastq files (single-end and paired-end)
  * No empty lines
  * Length of quality and sequence match
  * Only DNA chars in sequence
+
+NOW IN SEQFU: seqfu check 
 """
 
 from copy import deepcopy

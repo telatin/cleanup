@@ -14,30 +14,37 @@ report_header = """
 #     namespace: 'Cust Data'
 # headers:
 #     col1:
-#         title: '1. Raw sequences'
+#         title: 'Raw sequences'
 #         description: 'Initial number of sequences'
 #         format: '{:,.0f}'
+#         placement: 10
 #     col2:
-#         title: '2. Host (%)'
+#         title: 'Host (%)'
 #         description: 'Fraction of host reads'
+#         placement: 20
 #     col3:
-#         title: '3. Non-host reads'
+#         title: 'Non-host reads'
 #         description: 'Number of reads after host removal'
 #         format: '{:,.0f}'
+#         placement: 30
 #     col4:
-#         title: '4. Passing Filters (%)'
+#         title: 'PF (%)'
 #         description: 'Fraction of reads passing filters (host removal and adapter trimming)'
+#         placement: 40
 #     col5:
-#         title: '5. Cleaned reads'
+#         title: 'Cleaned reads'
 #         description: 'Number of reads after fastp filter'
 #         format: '{:,.0f}'
+#         placement: 50
 #     col6:
-#         title: '6. Contaminants reads'
+#         title: 'Contaminants reads'
 #         description: 'Number of contaminants reads (optional step)'
 #         format: '{:,.0f}'
+#         placement: 60
 #     col7:
-#         title: '7. HG-Check'
+#         title: 'HG-Check'
 #         description: 'Ratio of large chromosomes/total human chromosomes'
+#         placement: 70
 Sample\tcol1\tcol2\tcol3\tcol4\tcol5\tcol6\tcol7
 """
 

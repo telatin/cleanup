@@ -26,10 +26,12 @@ adaptor removal and discarding reads that are too short afterwards.
 
 ## Dependencies
 
-A docker container is available as `andreatelatin/cleanup:1.3`.
+The pipeline is written in [Nextflow](https://www.nextflow.io/), 
+and its dependencies are available as a
+docker container `andreatelatin/cleanup:1.3`.
 
-The YAML file with the conda environment with the required tools (fastp, kraken2,
-MultiQC) is provided in `deps`.
+The YAML file with the conda environment with the required tools
+(fastp, kraken2, MultiQC) is provided in `deps/`.
 
 ## Databases
 
@@ -41,6 +43,8 @@ Default databases can be downloaded with:
 ```bash
 nextflow run telatin/cleanup -entry getdb --dbdir /path/to/databases/
 ```
+
+This will download the _host database_ and the _gutcheck_ profiling database (see below).
 
 ### Host database
 
@@ -57,7 +61,10 @@ tar -xzvf kraken2_human_db.tar.gz
 
 The preliminar profiling is used to evaluate abnormal fractions of unclassified reads.
 
-A minimal databases to detect some common species using < 8 GB of RAM is available from zenodo (see [databases](md/databases.md).
+A minimal databases to detect some common gut microbial species using < 8 GB of RAM is available
+from zenodo (see [databases](md/databases.md).
+
+#### Other profiling databases
 
 Two valid options to perform a general purpose profiling are:
 
