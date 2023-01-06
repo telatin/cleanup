@@ -1,0 +1,15 @@
+title: "GMH/cleanup"
+subtitle: "A prescreening pipeline for GMH Metagenome studies"
+intro_text: "MultiQC reports summarise analysis results about host contamination and QC"
+#report_comment: "Andrea Telatin 2022"
+show_analysis_paths: False
+
+
+custom_logo_url: "https://quadram.ac.uk/wp-content/themes/quadram/images/quadram-logo-white.png"
+custom_logo_title: "Quadram Institute Bioscience"
+
+report_header_info:
+  - Contact E-mail: "andrea.telatin@quadram.ac.uk"
+  - Application Type: "GMH Metagenomics"
+  - Project Type: "Whole Metagenome Sequencing"
+  - Sequencing Setup: "2x150bp"

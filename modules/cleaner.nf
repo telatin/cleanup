@@ -27,8 +27,8 @@ process RELABEL {
 
     script:
     """
-    seqfu cat --strip-comments --strip-name --prefix ${sample_id}${separator} --suffix ${tag1} ${reads[0]} > ${sample_id}_R1.fastq
-    seqfu cat --strip-comments --strip-name --prefix ${sample_id}${separator} --suffix ${tag2} ${reads[1]} > ${sample_id}_R2.fastq
+    seqfu cat --strip-comments --strip-name --prefix ${sample_id}${separator} --append ${tag1} ${reads[0]} > ${sample_id}_R1.fastq
+    seqfu cat --strip-comments --strip-name --prefix ${sample_id}${separator} --append ${tag2} ${reads[1]} > ${sample_id}_R2.fastq
     """   
 }
 process MINREADS {
@@ -237,6 +237,7 @@ process MULTIQC {
         
     input:
     path '*'  
+    path 'assets'
     
     output:
     path 'multiqc_*' optional true
@@ -245,7 +246,8 @@ process MULTIQC {
     """
     # Old MultiQC will crash with Kraken2 reports 100% unclassified
     #fixKrakenReports.py *.kraken2.tsv
-    multiqc --force . 
+    echo "custom_logo: \"\$PWD/assets/quadram-logo-white.png\"" >> logo.yaml
+    multiqc -c assets/multiqc.yaml -c logo.yaml --force . 
     """
 } 
 

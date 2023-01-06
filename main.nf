@@ -1,7 +1,10 @@
 /*  Input parameters   */
 nextflow.enable.dsl = 2
+
+def version = "1.5"
 params.dbdir = false
 params.reads = "$baseDir/nano/*_R{1,2}.fastq.gz"
+params.mqc_conf = "$baseDir/modules/assets/"
 params.outdir = "cleanup-output"
 
 // relabeling options
@@ -37,7 +40,7 @@ def labelNone = params.saveraw || params.savehost || params.contaminants || para
 
 // prints to the screen and to the log
 log.info """
-         GMH Cleanup pipeline (version 1.5)
+         GMH Cleanup pipeline (version ${version})
          ===================================
          """
          .stripIndent()
@@ -62,6 +65,7 @@ if (params.dbdir == false) {
 
 
 /*    Modules  */
+include { VERSIONS } from './modules/versions'
 include { KRAKEN2_HOST; KRAKEN2_REPORT; BRACKEN } from './modules/kraken'
 include { FASTP; MULTIQC; TRACKFILES; GETLEN; INDEX; 
           REMOVE_CONTAMINANTS; REMOVE_MAPPED; MAP_CONTAMINANTS; 
@@ -82,7 +86,7 @@ reads = Channel
         .fromFilePairs(params.reads, checkIfExists: true)
 
 workflow {
-KRAKEN2_HOST
+  VERSIONS(version)
   /* Check mandatory arguments */
   if (params.hostdb == false) { log.error("Host database not specified (--hostdb)"); exit(1) }
   if (params.krakendb == false) { log.error("Host database not specified (--krakendb)"); exit(1) }
@@ -145,5 +149,5 @@ KRAKEN2_HOST
   }
   // MultiQC
   TRACKFILES(FASTP.out.json.mix( KRAKEN2_HOST.out.txt, CONTAMLOG, CHECK_REPORT.out ).collect() )
-  MULTIQC( FASTP.out.json.mix( KRAKEN2_REPORT.out, TRACKFILES.out, ILLUMINA_TABLE.out ).collect() )
+  MULTIQC( FASTP.out.json.mix( KRAKEN2_REPORT.out, TRACKFILES.out, ILLUMINA_TABLE.out, VERSIONS.out ).collect(), params.mqc_conf )
 }
