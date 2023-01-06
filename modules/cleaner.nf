@@ -27,8 +27,8 @@ process RELABEL {
 
     script:
     """
-    seqfu cat --strip-comments --strip-name --prefix ${sample_id}${separator}${tag1} ${reads[0]} > ${sample_id}_R1.fastq
-    seqfu cat --strip-comments --strip-name --prefix ${sample_id}${separator}${tag2} ${reads[1]} > ${sample_id}_R2.fastq
+    seqfu cat --strip-comments --strip-name --prefix ${sample_id}${separator} --suffix ${tag1} ${reads[0]} > ${sample_id}_R1.fastq
+    seqfu cat --strip-comments --strip-name --prefix ${sample_id}${separator} --suffix ${tag2} ${reads[1]} > ${sample_id}_R2.fastq
     """   
 }
 process MINREADS {
