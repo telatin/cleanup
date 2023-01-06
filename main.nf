@@ -86,7 +86,7 @@ reads = Channel
         .fromFilePairs(params.reads, checkIfExists: true)
 
 workflow {
-  VERSIONS(version)
+  
   /* Check mandatory arguments */
   if (params.hostdb == false) { log.error("Host database not specified (--hostdb)"); exit(1) }
   if (params.krakendb == false) { log.error("Host database not specified (--krakendb)"); exit(1) }
@@ -105,6 +105,8 @@ workflow {
     contaminantsPath = file(params.contaminants, checkIfExists: true)
   }
   
+  VERSIONS(version, hostPath, reportPath)
+
   // Discard samples not passing the min reads filter
   MINREADS(reads, params.minreads)
   
@@ -115,16 +117,16 @@ workflow {
   // Host removal (Human reads)
   KRAKEN2_HOST( MINREADS.out.reads, hostPath)
   CHECK_REPORT(KRAKEN2_HOST.out.report)
-  PIGZ_READS(KRAKEN2_HOST.out.reads)
+  //PIGZ_READS(KRAKEN2_HOST.out.reads)
   PIGZ_HOST(KRAKEN2_HOST.out.host)
   HOSTQC(KRAKEN2_HOST.out.report.map{ it -> it[1] }.collect())
   // Kraken2 Host report (if using custom human db)
   // If a FASTA contaminats is passed, filter the reads against it with BWA
   if (params.contaminants == false) {
-    TOFILTER = PIGZ_READS.out
+    TOFILTER = KRAKEN2_HOST.out
     CONTAMLOG = Channel.empty()
   } else {
-    TOFILTER = REMOVE_CONTAMINANTS(PIGZ_READS, contaminantsPath )
+    TOFILTER = REMOVE_CONTAMINANTS(KRAKEN2_HOST.out.reads, contaminantsPath )
     CONTAMLOG = TOFILTER.stats
   }
   

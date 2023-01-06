@@ -6,7 +6,7 @@ show_analysis_paths: False
 
 
 custom_logo_url: "https://github.com/telatin/cleanup#readme"
-custom_logo_title: "Quadram Institute Bioscience"
+custom_logo_title: "Pipeline documentation"
 
 report_header_info:
   - Contact E-mail: "andrea.telatin@quadram.ac.uk"

@@ -1,6 +1,8 @@
 process VERSIONS {
     input:
     val(version)
+    val(host)
+    val(profiling)
 
     output:
     file 'versions_mqc.txt' 
@@ -12,13 +14,13 @@ process VERSIONS {
     echo -e "# section_name: 'Software and Databases'"  >> versions_mqc.txt
     echo -e "# description: 'Version of the programs used in the pipeline'"  >> versions_mqc.txt
     echo -e "Program\tVersion"  >> versions_mqc.txt
-    echo -e "cleanup/pipeline\t${version}"  >> versions_mqc.txt
-    echo -e "fastp\t\$(fastp --version |& cut -f 2 -d ' ')"  >> versions_mqc.txt
-    echo -e "seqfu\t\$(seqfu version)"  >> versions_mqc.txt
-    echo -e "kraken2\t\$(kraken2 --version | grep version | rev | cut -f 1 -d ' ' | rev)"  >> versions_mqc.txt
-    echo -e "pigz\t\$(pigz --version | cut -f 2 -d ' ')"  >> versions_mqc.txt
-    echo -e "Host database\t"  >> versions_mqc.txt
-    echo -e "Profiling database\t"  >> versions_mqc.txt
+    echo -e "cleanup/pipeline\tv${version}"  >> versions_mqc.txt
+    echo -e "fastp\tv\$(fastp --version |& cut -f 2 -d ' ')"  >> versions_mqc.txt
+    echo -e "seqfu\tv\$(seqfu version)"  >> versions_mqc.txt
+    echo -e "kraken2\tv\$(kraken2 --version | grep version | rev | cut -f 1 -d ' ' | rev)"  >> versions_mqc.txt
+    echo -e "pigz\tv\$(pigz --version | cut -f 2 -d ' ')"  >> versions_mqc.txt
+    echo -e "Host database\t${host}"  >> versions_mqc.txt
+    echo -e "Profiling database\t${profiling}"  >> versions_mqc.txt
     
 
     """

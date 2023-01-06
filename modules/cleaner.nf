@@ -26,9 +26,11 @@ process RELABEL {
     tuple val(sample_id), path("${sample_id}_R{1,2}.fastq") 
 
     script:
+    def forwardtag = tag1 ? "--append ${tag1}"  : ""
+    def reversetag = tag2 ? "--append ${tag2}"  : ""
     """
-    seqfu cat --strip-comments --strip-name --prefix ${sample_id}${separator} --append ${tag1} ${reads[0]} > ${sample_id}_R1.fastq
-    seqfu cat --strip-comments --strip-name --prefix ${sample_id}${separator} --append ${tag2} ${reads[1]} > ${sample_id}_R2.fastq
+    seqfu cat --strip-comments --strip-name --prefix ${sample_id}${separator} ${forwardtag} ${reads[0]} > ${sample_id}_R1.fastq
+    seqfu cat --strip-comments --strip-name --prefix ${sample_id}${separator} ${reversetag} ${reads[1]} > ${sample_id}_R2.fastq
     """   
 }
 process MINREADS {
@@ -246,7 +248,7 @@ process MULTIQC {
     """
     # Old MultiQC will crash with Kraken2 reports 100% unclassified
     #fixKrakenReports.py *.kraken2.tsv
-    echo "custom_logo: \"\$PWD/assets/quadram-logo-white.png\"" >> logo.yaml
+    echo "custom_logo: \"\$PWD/assets/cleanup-128.png\"" >> logo.yaml
     multiqc -c assets/multiqc.yaml -c logo.yaml --force . 
     """
 } 
