@@ -5,7 +5,7 @@ intro_text: "MultiQC reports summarise analysis results about host contamination
 show_analysis_paths: False
 
 
-custom_logo_url: "https://quadram.ac.uk/wp-content/themes/quadram/images/quadram-logo-white.png"
+custom_logo_url: "https://github.com/telatin/cleanup#readme"
 custom_logo_title: "Quadram Institute Bioscience"
 
 report_header_info:
