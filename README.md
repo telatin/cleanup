@@ -1,13 +1,11 @@
 <a href="#readme" description="Cleanup Repository">
-<img align="right" width="128" height="128" src="docs/cleanup-logo.png"></a>
+<img align="right" width="128" height="128" src="md/cleanup-logo.png"></a>
 
 # cleanup
 
 [![nextflow-ci](https://github.com/telatin/cleanup/actions/workflows/ci.yaml/badge.svg)](https://github.com/telatin/cleanup/actions/workflows/ci.yaml)
 [![last commit](https://img.shields.io/github/last-commit/telatin/cleanup)](https://github.com/telatin/cleanup)
 [![last commit](https://img.shields.io/github/v/release/telatin/cleanup)](https://github.com/telatin/cleanup)
-
-![Cleanup Pipeline](cleanup.jpg)
 
 Nextflow pipeline to preprocess metagenomics reads:
 
@@ -118,3 +116,5 @@ The output directory contains a [MultiQC report](https://telatin.github.io/micro
 * [Shell output](md/running.md)
 * [Execution report](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_execution.html)
 * [Timeline](https://telatin.github.io/microbiome-bioinformatics/attachments/cleaner_timeline.html)
+
+![Cleanup Pipeline](cleanup.jpg)
