@@ -48,7 +48,8 @@ This will download the _host database_ and the _gutcheck_ profiling database (se
 
 ### Host database
 
-A **custom database** with masked/filtered Human genome, PhiX and Sars-Cov-2 is [available from Zenodo](https://zenodo.org/record/7044072), (see [databases](md/databases.md).
+A **custom database** with masked/filtered Human genome (split by chromosomes), PhiX and Sars-Cov-2 is
+[available from Zenodo](https://zenodo.org/record/7044072), (see [databases](md/databases.md).
 
 Alternatively, a plain Human database can be downloaded as follows (RefSeq version of GRCh38.p13):
 
@@ -84,8 +85,12 @@ Notable options:
 
 * `--saveraw`: save reads after host removal but prior to FASTP filtering [default: false]
 * `--savehost`: save the reads flagged as host [default: false]
+* Reads are relabeled as _SampleID\_number_ (e.g. `Sample1-1`). This behaviour can be changed with:
+  * `--separator STR`: the separator between sample name and read number [default: `-`]
+  * `--tag1 STR`: the tag for read 1, for example _/1_ [default: none]
+  * `--tag2 STR`: the tag for read 2, for example _/2_ [default: none]
 * `--contaminants FASTA`: also filter against a fasta file [:warning: experimental]
-* `--denovo`: enable assembly
+* `--denovo`: enable assembly [:warning: experimental]
 
 Profiles:
 

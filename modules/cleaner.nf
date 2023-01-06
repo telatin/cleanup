@@ -18,14 +18,17 @@ process RELABEL {
 
     input:
     tuple val(sample_id), path(reads) 
+    val(separator)
+    val(tag1)
+    val(tag2)
 
     output:
-    tuple val(sample_id), path(reads) 
+    tuple val(sample_id), path("${sample_id}_R{1,2}.fastq") 
 
     script:
     """
-    seqfu cat --strip-comments --strip-name --prefix ${sample_id}. ${reads[0]} > ${sample_id}_R1.fastq
-    seqfu cat --strip-comments --strip-name --prefix ${sample_id}. ${reads[1]} > ${sample_id}_R2.fastq
+    seqfu cat --strip-comments --strip-name --prefix ${sample_id}${separator}${tag1} ${reads[0]} > ${sample_id}_R1.fastq
+    seqfu cat --strip-comments --strip-name --prefix ${sample_id}${separator}${tag2} ${reads[1]} > ${sample_id}_R2.fastq
     """   
 }
 process MINREADS {
@@ -118,7 +121,7 @@ process REMOVE_CONTAMINANTS {
     tag "$sample_id"
     label "process_mapping"
 
-    publishDir "$params.outdir/reads/", 
+    publishDir "$params.outdir/contam-reads/", 
         pattern: "contaminants",
         mode: 'copy'
 

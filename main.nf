@@ -4,6 +4,11 @@ params.dbdir = false
 params.reads = "$baseDir/nano/*_R{1,2}.fastq.gz"
 params.outdir = "cleanup-output"
 
+// relabeling options
+params.separator = "-"    // separator between sample name and progressive number (read number)
+params.tag1      = ""     // appended at the end of the name of reads R1
+params.tag2      = ""     // appended at the end of the name of reads R2
+
 // Filtering options
 params.minlen = 50
 params.minreads = 1000
@@ -32,7 +37,7 @@ def labelNone = params.saveraw || params.savehost || params.contaminants || para
 
 // prints to the screen and to the log
 log.info """
-         GMH Cleanup pipeline (version 1.4)
+         GMH Cleanup pipeline (version 1.5)
          ===================================
          """
          .stripIndent()
@@ -46,6 +51,7 @@ if (params.dbdir == false) {
             kraken db    : ${params.krakendb}
             -----------------------------------
             Extras       : ${labelNone} ${labelSaveReads} ${labelSaveHost} ${labelDeNovo} ${labelContaminants}
+            Relabeling   : separator="${params.separator}" tag1="${params.tag1}" tag2="${params.tag2}"
             """
             .stripIndent()
 } else {
@@ -120,7 +126,7 @@ KRAKEN2_HOST
   
   // Remove adapters
   MINREADS_FINALCHECK(TOFILTER.reads, params.minreads)
-  RELABEL(MINREADS_FINALCHECK.out.reads )
+  RELABEL(MINREADS_FINALCHECK.out.reads, params.separator, params.tag1, params.tag2 )
   FASTP(RELABEL.out, params.minlen, params.minqual )
 
   
