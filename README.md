@@ -1,3 +1,6 @@
+<a href="#readme" description="Cleanup Repository">
+<img align="right" width="128" height="128" src="docs/cleanup-logo.png"></a>
+
 # cleanup
 
 [![nextflow-ci](https://github.com/telatin/cleanup/actions/workflows/ci.yaml/badge.svg)](https://github.com/telatin/cleanup/actions/workflows/ci.yaml)
