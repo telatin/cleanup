@@ -16,7 +16,7 @@ process CHECK_REPORT {
  
     script:
     """
-    check-report.py ${report} > ${sample_id}.ratio.txt
+    check-report.py --fail-safe ${report} > ${sample_id}.ratio.txt
     """  
 }  
 

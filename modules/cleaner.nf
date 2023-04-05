@@ -240,6 +240,7 @@ process MULTIQC {
     input:
     path '*'  
     path 'assets'
+    val (project)
     
     output:
     path 'multiqc_*' optional true
@@ -249,7 +250,7 @@ process MULTIQC {
     # Old MultiQC will crash with Kraken2 reports 100% unclassified
     #fixKrakenReports.py *.kraken2.tsv
     echo "custom_logo: \"\$PWD/assets/cleanup-128.png\"" >> logo.yaml
-    multiqc -c assets/multiqc.yaml -c logo.yaml --force . 
+    multiqc -c assets/multiqc.yaml -c logo.yaml --comment "Project ${project}" --force . 
     """
 } 
 

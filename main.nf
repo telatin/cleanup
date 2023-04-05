@@ -6,6 +6,7 @@ params.dbdir = false
 params.reads = "$baseDir/nano/*_R{1,2}.fastq.gz"
 params.mqc_conf = "$baseDir/modules/assets/"
 params.outdir = "cleanup-output"
+params.project = "GMH"
 
 // relabeling options
 params.separator = "-"    // separator between sample name and progressive number (read number)
@@ -48,6 +49,7 @@ log.info """
 if (params.dbdir == false) {
   log.info """
             reads        : ${params.reads}
+            project      : ${params.project}
             outdir       : ${params.outdir}
             min reads    : ${params.minreads}
             host db      : ${params.hostdb}
@@ -151,5 +153,5 @@ workflow {
   }
   // MultiQC
   TRACKFILES(FASTP.out.json.mix( KRAKEN2_HOST.out.txt, CONTAMLOG, CHECK_REPORT.out ).collect() )
-  MULTIQC( FASTP.out.json.mix( KRAKEN2_REPORT.out, TRACKFILES.out, ILLUMINA_TABLE.out, VERSIONS.out ).collect(), params.mqc_conf )
+  MULTIQC( FASTP.out.json.mix( KRAKEN2_REPORT.out, TRACKFILES.out, ILLUMINA_TABLE.out, VERSIONS.out ).collect(), params.mqc_conf, params.project )
 }

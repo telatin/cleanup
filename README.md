@@ -84,6 +84,7 @@ nextflow run main.nf  --reads 'data/*_R{1,2}.fastq.gz' \
 
 Notable options:
 
+* `--project STR`: project name for the report
 * `--saveraw`: save reads after host removal but prior to FASTP filtering [default: false]
 * `--savehost`: save the reads flagged as host [default: false]
 * Reads are relabeled as _SampleID\_number_ (e.g. `Sample1-1`). This behaviour can be changed with:
